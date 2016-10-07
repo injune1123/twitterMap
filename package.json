@@ -1,0 +1,24 @@
+{
+  "name": "twittermap",
+  "version": "1.0.0",
+  "description": "a web application to present tweets on google map",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/injune1123/twitterMap.git"
+  },
+  "keywords": [
+    "tweets",
+    "google",
+    "map"
+  ],
+  "author": "Jun and Emily",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/injune1123/twitterMap/issues"
+  },
+  "homepage": "https://github.com/injune1123/twitterMap#readme"
+}
