@@ -4,7 +4,8 @@
   "description": "a web application to present tweets on google map",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
@@ -20,5 +21,11 @@
   "bugs": {
     "url": "https://github.com/injune1123/twitterMap/issues"
   },
-  "homepage": "https://github.com/injune1123/twitterMap#readme"
+  "homepage": "https://github.com/injune1123/twitterMap#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "lodash": "^4.16.4",
+    "nconf": "^0.8.4",
+    "twit": "^2.2.5"
+  }
 }

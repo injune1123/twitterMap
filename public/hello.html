@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+  <head>
+    <meta charset="utf-8">
+    <title>Home</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+
+    <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+    <style>
+    /* http://meyerweb.com/eric/tools/css/reset/
+       v2.0 | 20110126
+       License: none (public domain)
+    */
+
+    html, body, div, span, applet, object, iframe,
+    h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+    a, abbr, acronym, address, big, cite, code,
+    del, dfn, em, img, ins, kbd, q, s, samp,
+    small, strike, strong, sub, sup, tt, var,
+    b, u, i, center,
+    dl, dt, dd, ol, ul, li,
+    fieldset, form, label, legend,
+    table, caption, tbody, tfoot, thead, tr, th, td,
+    article, aside, canvas, details, embed,
+    figure, figcaption, footer, header, hgroup,
+    menu, nav, output, ruby, section, summary,
+    time, mark, audio, video {
+    	margin: 0;
+    	padding: 0;
+    	border: 0;
+    	font-size: 100%;
+    	font: inherit;
+    	vertical-align: baseline;
+    }
+    /* HTML5 display-role reset for older browsers */
+    article, aside, details, figcaption, figure,
+    footer, header, hgroup, menu, nav, section {
+    	display: block;
+    }
+    body {
+    	line-height: 1;
+    }
+    ol, ul {
+    	list-style: none;
+    }
+    blockquote, q {
+    	quotes: none;
+    }
+    blockquote:before, blockquote:after,
+    q:before, q:after {
+    	content: '';
+    	content: none;
+    }
+    table {
+    	border-collapse: collapse;
+    	border-spacing: 0;
+    }
+
+    #map { height: 100vh; }
+    #title {
+      margin-top: 20px;
+      margin-left: 100px;
+      position: absolute;
+      z-index: 10000;
+      font-family: cursive;;
+      font-size: 40px
+    }
+    </style>
+  </head>
+  <body>
+    <h1 id="title">Twitter Map</h1>
+    <div id="map"></div>
+
+    <script>
+      var map = L.map( 'map', {
+          center: [20.0, 5.0],
+          minZoom: 2,
+          zoom: 2
+      });
+
+      L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+          subdomains: ['a','b','c']
+      }).addTo( map );
+
+      var markers = [
+         {
+           "name": "Shanghai",
+           "url": "https://en.wikipedia.org/wiki/Shanghai",
+           "lat": 31.2304,
+           "lng": 121.4737
+         },
+         {
+           "name": "New York",
+           "url": "https://en.wikipedia.org/wiki/New_York",
+           "lat": 40.7128,
+           "lng": -74.0059
+         },
+         {
+           "name": "Oregon",
+           "url": "https://en.wikipedia.org/wiki/Japan",
+           "lat": 43.8041,
+           "lng": -120.5542
+         }
+      ];
+
+      for ( var i=0; i < markers.length; ++i )
+      {
+         L.marker( [markers[i].lat, markers[i].lng] )
+            .bindPopup( '<a href="' + markers[i].url + '" target="_blank">' + markers[i].name + '</a>' )
+            .addTo( map );
+      }
+
+    </script>
+  </body>
+
+</html>
