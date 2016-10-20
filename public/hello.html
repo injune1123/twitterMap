@@ -6,6 +6,7 @@
 
     <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
 
     <style>
     /* http://meyerweb.com/eric/tools/css/reset/
@@ -121,44 +122,69 @@
       // });
 
 
-// Send a POST request 
-    axios({
-      method: 'post',
-      url: 'https://search-twitter-map-elastic-search-p3rukqk4g4jihaolzvop62ysea.us-east-1.es.amazonaws.com/tweets2/_search',
-      data: {
-        "size":100,
-        "query": {
-            "match_all": {}
-        }
-    }
-    }).then(function(response){
-      console.log(response.data.hits.hits);
-      response.data.hits.hits.map(function(hit){
 
-          var circle = L.circle(hit._source.tweetGeoCoordinates, {
+      var socket = io.connect("http://localhost:8081/");
+      socket.on("a new tweet is coming", function(data) {
+          // Do stuff when we connect to the server
+          console.log("wawawawlallal")
+          console.log(data);
+
+
+
+          var circle = L.circle(data, {
               color: 'red',
               fillColor: '#f03',
               fillOpacity: 0.5,
               radius: 500
           }).addTo(map);
-          
 
-          setTimeout(function(){ 
+
+          setTimeout(function(){
             map.removeLayer(circle)
               // console.log(map);
               // console.log(circle);
 
-           }, 8000);
+           }, 1000);
+      });
 
-          // setTimeout(function(){
-          //   console.log("trying to remove");
-
-
-          //   map.removeLayer(circle)}, 60000);
-
-
-      })
-    });
+// // Send a POST request
+//     axios({
+//       method: 'post',
+//       url: 'https://search-twitter-map-elastic-search-p3rukqk4g4jihaolzvop62ysea.us-east-1.es.amazonaws.com/tweets2/_search',
+//       data: {
+//         "size":10000,
+//         "query": {
+//             "match_all": {}
+//         }
+//     }
+//     }).then(function(response){
+//       console.log(response.data.hits.hits);
+//       response.data.hits.hits.map(function(hit){
+//
+//           var circle = L.circle(hit._source.tweetGeoCoordinates, {
+//               color: 'red',
+//               fillColor: '#f03',
+//               fillOpacity: 0.5,
+//               radius: 500
+//           }).addTo(map);
+//
+//
+//           setTimeout(function(){
+//             map.removeLayer(circle)
+//               // console.log(map);
+//               // console.log(circle);
+//
+//            }, 8000);
+//
+//           // setTimeout(function(){
+//           //   console.log("trying to remove");
+//
+//
+//           //   map.removeLayer(circle)}, 60000);
+//
+//
+//       })
+//     });
 
 
     </script>

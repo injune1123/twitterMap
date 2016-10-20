@@ -1,13 +1,22 @@
+// set up basic node express server
 var express = require('express');
 var app = express();
-//
-var Elasticsearch = require('aws-es');
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
+var port =  process.env.PORT || 8081;
 
-var nconf = require('nconf');
+server.listen(port, function () {
+  console.log('Example app listening on port 8081!');
+});
+
+// serve static files, routing
+app.use('/static', express.static(__dirname + '/public'));
+
+//initialize twitter
 var Twit = require('twit');
 var _ = require('lodash');
 var fs = require('fs');
-
+var nconf = require('nconf');
 nconf.file({ file: 'config.json' }).env();
 
 var twitter = new Twit({
@@ -17,7 +26,8 @@ var twitter = new Twit({
   access_token_secret: nconf.get('TWITTER_ACCESS_TOKEN_SECRET')
 });
 
-//initialization
+//initialize AWS ES
+var Elasticsearch = require('aws-es');
 var elasticsearch = new Elasticsearch({
 		accessKeyId: nconf.get('ACCESS_KEY_ID'),
 		secretAccessKey: nconf.get('SECRECT_ACCESS_KEY'),
@@ -26,13 +36,26 @@ var elasticsearch = new Elasticsearch({
 		host: nconf.get("HOST")
 });
 
-
+// set initial area to the globe
 var locations = {
 	all: '-180,-90,180,90'
 }
 
-// attach to filter stream
+// difine tweetStrem
 var tweetStream = twitter.stream('statuses/filter', { locations: locations.all });
+
+// //tweet app
+// io.on('connection', function (socket) {
+//   // when there is a new tweet message, this listens and executes
+//   socket.on('new message', function (data) {
+//     // we tell the client to execute 'new message'
+//     socket.broadcast.emit('new message', {
+//       username: socket.username,
+//       message: data
+//     });
+//   });
+// })
+
 
 // on tweet
 tweetStream.on('tweet', function (tweet) {
@@ -41,6 +64,7 @@ tweetStream.on('tweet', function (tweet) {
 if (tweet.geo) {
   // console.log(tweet);
   //console.log(tweet.text);
+  io.sockets.emit('a new tweet is coming', tweet.geo.coordinates);
 
   //index
   elasticsearch.index({
@@ -68,7 +92,6 @@ if (tweet.geo) {
 });
 
 
-app.use('/static', express.static(__dirname + '/public'));
 
 app.get('/', function (req, res) {
   res.send('Hello World!');
@@ -78,9 +101,6 @@ app.get('/about', function (req, res) {
   res.send('Hi, we are a good team!');
 });
 
-app.listen(8081, function () {
-  console.log('Example app listening on port 3000!');
-});
 
 app.use(function(req, res, next) {
   res.status(404).send('Sorry cant find that!');
