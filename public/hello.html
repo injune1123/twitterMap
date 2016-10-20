@@ -5,6 +5,8 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
 
     <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
     <style>
     /* http://meyerweb.com/eric/tools/css/reset/
        v2.0 | 20110126
@@ -109,6 +111,55 @@
             .bindPopup( '<a href="' + markers[i].url + '" target="_blank">' + markers[i].name + '</a>' )
             .addTo( map );
       }
+
+
+
+      // axios.get('https://search-twitter-map-elastic-search-p3rukqk4g4jihaolzvop62ysea.us-east-1.es.amazonaws.com")
+      // .then(function(response){
+      //   console.log(response.data); // ex.: { user: 'Your User'}
+      //   console.log(response.status); // ex.: 200
+      // });
+
+
+// Send a POST request 
+    axios({
+      method: 'post',
+      url: 'https://search-twitter-map-elastic-search-p3rukqk4g4jihaolzvop62ysea.us-east-1.es.amazonaws.com/tweets2/_search',
+      data: {
+        "size":100,
+        "query": {
+            "match_all": {}
+        }
+    }
+    }).then(function(response){
+      console.log(response.data.hits.hits);
+      response.data.hits.hits.map(function(hit){
+
+          var circle = L.circle(hit._source.tweetGeoCoordinates, {
+              color: 'red',
+              fillColor: '#f03',
+              fillOpacity: 0.5,
+              radius: 500
+          }).addTo(map);
+          
+
+          setTimeout(function(){ 
+            map.removeLayer(circle)
+              // console.log(map);
+              // console.log(circle);
+
+           }, 8000);
+
+          // setTimeout(function(){
+          //   console.log("trying to remove");
+
+
+          //   map.removeLayer(circle)}, 60000);
+
+
+      })
+    });
+
 
     </script>
   </body>

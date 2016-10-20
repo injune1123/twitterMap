@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
-
+//
+var Elasticsearch = require('aws-es');
 
 var nconf = require('nconf');
 var Twit = require('twit');
@@ -16,6 +17,14 @@ var twitter = new Twit({
   access_token_secret: nconf.get('TWITTER_ACCESS_TOKEN_SECRET')
 });
 
+//initialization
+var elasticsearch = new Elasticsearch({
+		accessKeyId: nconf.get('ACCESS_KEY_ID'),
+		secretAccessKey: nconf.get('SECRECT_ACCESS_KEY'),
+		service: nconf.get('SERVICE'),
+		region: nconf.get('REGION'),
+		host: nconf.get("HOST")
+});
 
 
 var locations = {
@@ -30,20 +39,33 @@ tweetStream.on('tweet', function (tweet) {
 
 // check that tweet has geo
 if (tweet.geo) {
-  //console.log(tweet);
+  // console.log(tweet);
   //console.log(tweet.text);
-  fs.appendFile('twitt_data.txt', tweet.geo.coordinates + '\r\n' + tweet.text + '\r\n\r\n', function(err) {
-    if (err) {
-      console.error("write error: " + error.message);
-    } else {
-      console.log(tweet);
-    }
-    })
+
+  //index
+  elasticsearch.index({
+  			index: 'tweets2',
+  			type: 'tweets',
+  			body: {
+  				'tweetGeoCoordinates': tweet.geo.coordinates,
+  				'tweetContent': tweet.text
+  			}
+  		}, function(err, data) {
+  			console.log('json reply received');
+  });
+
+
+  // fs.appendFile('twitt_data.txt', '{"tweetGeoCoordinates": ' + ('[' + tweet.geo.coordinates + ']') + ', "tweetContent" :' + ('"' + tweet.text + '"') + '}\r\n\r\n', function(err) {
+  //   if (err) {
+  //     console.error("write error: " + error.message);
+  //   } else {
+  //     console.log("tweet:", tweet);
+  //   }
+  //   })
+
   };
 
 });
-
-
 
 
 app.use('/static', express.static(__dirname + '/public'));
