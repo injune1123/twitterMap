@@ -3,191 +3,74 @@
     <meta charset="utf-8">
     <title>Home</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
-
+    <link rel="stylesheet" href="./css/reset.css">
+    <link rel="stylesheet" href="./css/bootstrap.css">
     <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
 
-    <style>
-    /* http://meyerweb.com/eric/tools/css/reset/
-       v2.0 | 20110126
-       License: none (public domain)
-    */
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/main.css">
 
-    html, body, div, span, applet, object, iframe,
-    h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-    a, abbr, acronym, address, big, cite, code,
-    del, dfn, em, img, ins, kbd, q, s, samp,
-    small, strike, strong, sub, sup, tt, var,
-    b, u, i, center,
-    dl, dt, dd, ol, ul, li,
-    fieldset, form, label, legend,
-    table, caption, tbody, tfoot, thead, tr, th, td,
-    article, aside, canvas, details, embed,
-    figure, figcaption, footer, header, hgroup,
-    menu, nav, output, ruby, section, summary,
-    time, mark, audio, video {
-    	margin: 0;
-    	padding: 0;
-    	border: 0;
-    	font-size: 100%;
-    	font: inherit;
-    	vertical-align: baseline;
-    }
-    /* HTML5 display-role reset for older browsers */
-    article, aside, details, figcaption, figure,
-    footer, header, hgroup, menu, nav, section {
-    	display: block;
-    }
-    body {
-    	line-height: 1;
-    }
-    ol, ul {
-    	list-style: none;
-    }
-    blockquote, q {
-    	quotes: none;
-    }
-    blockquote:before, blockquote:after,
-    q:before, q:after {
-    	content: '';
-    	content: none;
-    }
-    table {
-    	border-collapse: collapse;
-    	border-spacing: 0;
-    }
+    <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
 
-    #map { height: 100vh; }
-    #title {
-      margin-top: 20px;
-      margin-left: 100px;
-      position: absolute;
-      z-index: 10000;
-      font-family: cursive;;
-      font-size: 40px
-    }
-    </style>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
   </head>
   <body>
     <h1 id="title">Twitter Map</h1>
+    <!-- search bar -->
+    <!-- <input type="text" id="searchInput" name="name" value=""> -->
+
+    <div style="position: absolute; z-index: 100000">
+
+      <div class="dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+          Filter Tweets by <strong>Selecting</strong> Keywords
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" id="keyword-list">
+          <li><a href="#" name="food">Only display tweets contain "food"</a></li>
+          <li role="separator" class="divider"></li>
+
+          <li><a href="#" name="love">Only display tweets contain "love"</a></li>
+          <li role="separator" class="divider"></li>
+
+          <li><a href="#" name="travel">Only display tweets contain "travel"</a></li>
+          <li role="separator" class="divider"></li>
+
+          <li><a href="#" name="movie">Only display tweets contain "movie"</a></li>
+          <li role="separator" class="divider"></li>
+
+          <li><a href="#" name="trump">Only display tweets contain "Trump"</a></li>
+          <li role="separator" class="divider"></li>
+
+          <li><a href="#" name="china">Only display tweets contain "China"</a></li>
+          <li role="separator" class="divider"></li>
+
+          <li><a href="#" name="music">Only display tweets contain "music"</a></li>
+          <li role="separator" class="divider"></li>
+
+          <li><a href="#" name="read">Only display tweets contain "read"</a></li>
+          <li role="separator" class="divider"></li>
+
+          <li><a href="#" name="paint">Only display tweets contain "paint"</a></li>
+          <li role="separator" class="divider"></li>
+
+          <li><a href="#" name="code">Only display tweets contain "code"</a></li>
+
+
+        </ul>
+      </div>
+  </div>
+
+
     <div id="map"></div>
 
-    <script>
-      var map = L.map( 'map', {
-          center: [20.0, 5.0],
-          minZoom: 2,
-          zoom: 2
-      });
+    <script src="./js/app.js"></script>
 
-      L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-          subdomains: ['a','b','c']
-      }).addTo( map );
-
-      var markers = [
-         {
-           "name": "Shanghai",
-           "url": "https://en.wikipedia.org/wiki/Shanghai",
-           "lat": 31.2304,
-           "lng": 121.4737
-         },
-         {
-           "name": "New York",
-           "url": "https://en.wikipedia.org/wiki/New_York",
-           "lat": 40.7128,
-           "lng": -74.0059
-         },
-         {
-           "name": "Oregon",
-           "url": "https://en.wikipedia.org/wiki/Japan",
-           "lat": 43.8041,
-           "lng": -120.5542
-         }
-      ];
-
-      for ( var i=0; i < markers.length; ++i )
-      {
-         L.marker( [markers[i].lat, markers[i].lng] )
-            .bindPopup( '<a href="' + markers[i].url + '" target="_blank">' + markers[i].name + '</a>' )
-            .addTo( map );
-      }
-
-
-
-      // axios.get('https://search-twitter-map-elastic-search-p3rukqk4g4jihaolzvop62ysea.us-east-1.es.amazonaws.com")
-      // .then(function(response){
-      //   console.log(response.data); // ex.: { user: 'Your User'}
-      //   console.log(response.status); // ex.: 200
-      // });
-
-
-
-      var socket = io.connect("http://localhost:8081/");
-      socket.on("a new tweet is coming", function(data) {
-          // Do stuff when we connect to the server
-          console.log("wawawawlallal")
-          console.log(data);
-
-
-
-          var circle = L.circle(data, {
-              color: 'red',
-              fillColor: '#f03',
-              fillOpacity: 0.5,
-              radius: 500
-          }).addTo(map);
-
-
-          setTimeout(function(){
-            map.removeLayer(circle)
-              // console.log(map);
-              // console.log(circle);
-
-           }, 1000);
-      });
-
-// // Send a POST request
-//     axios({
-//       method: 'post',
-//       url: 'https://search-twitter-map-elastic-search-p3rukqk4g4jihaolzvop62ysea.us-east-1.es.amazonaws.com/tweets2/_search',
-//       data: {
-//         "size":10000,
-//         "query": {
-//             "match_all": {}
-//         }
-//     }
-//     }).then(function(response){
-//       console.log(response.data.hits.hits);
-//       response.data.hits.hits.map(function(hit){
-//
-//           var circle = L.circle(hit._source.tweetGeoCoordinates, {
-//               color: 'red',
-//               fillColor: '#f03',
-//               fillOpacity: 0.5,
-//               radius: 500
-//           }).addTo(map);
-//
-//
-//           setTimeout(function(){
-//             map.removeLayer(circle)
-//               // console.log(map);
-//               // console.log(circle);
-//
-//            }, 8000);
-//
-//           // setTimeout(function(){
-//           //   console.log("trying to remove");
-//
-//
-//           //   map.removeLayer(circle)}, 60000);
-//
-//
-//       })
-//     });
-
-
-    </script>
   </body>
 
 </html>

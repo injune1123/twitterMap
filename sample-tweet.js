@@ -1,4 +1,4 @@
-tweet:{  
+tweet:{
    created_at:'Sun Oct 16 20:37:39 +0000 2016',
    id:787754401695957000,
    id_str:'787754401695956996',
@@ -107,4 +107,19 @@ tweet:{
    filter_level:'low',
    lang:'en',
    timestamp_ms:'1476650259790'
+}
+
+
+"hits":{
+  "_index": "tweets2",
+  "_type": "tweets",
+  "_id": "AVfbPEpepOSx-C9TowaU",
+  "_score": 1,
+  "_source": {
+     "tweetGeoCoordinates": [
+        36.0252914,
+        -83.9897614
+     ],
+     "tweetContent": "Playing around with a new door design. @ Nymbis Vapors https://t.co/NrfRkJ8Kcu"
+  }
 }
