@@ -1,5 +1,9 @@
 //initialize map
 var map = undefined;
+var markers = [];
+// var markersLayer = new L.LayerGroup();
+
+// console.log("markersLayer", markersLayer);
 
 function initializeMap(){
   map = L.map( 'map', {
@@ -25,13 +29,10 @@ function filterTweetsWhenKeywordUpdate(){
   var ul = document.getElementById("keyword-list");
   ul.addEventListener('click', function(e){
     if(e.target.tagName === 'A'){
-      console.log("circle: ", circle);
       console.log("keyword: ", keyword);
 
-        keyword = e.target.name;
-        fetchTweetsInES(keyword);
-        console.log("sss", keyword);
-
+      keyword = e.target.name;
+      fetchTweetsInES(keyword);
     }
   });
 }
@@ -40,10 +41,13 @@ filterTweetsWhenKeywordUpdate();
 
 // fetch filtered tweets
 function fetchTweetsInES( keyWord ) {
-  if(circle){
-    map.removeLayer(circle);
-
-  }
+      // markers= [];
+      // // markersLayer =  L.LayerGroup(markers);
+      //
+      // console.log('markers', markers)
+      // console.log('num of markers', markers.length)
+      //
+      // console.log('markersLayer: ',markersLayer.getLayers());
 
   var query = {"match_all": {}};
   var queryWithKeyWord = {"match": {"tweetContent": keyWord}};
@@ -60,7 +64,7 @@ function fetchTweetsInES( keyWord ) {
       "query": query
     }
   }).then(function(response){
-    console.log(response.data.hits.hits);
+    // console.log(response.data.hits.hits);
     response.data.hits.hits.map(function(hit){
 
         circle = L.circle(hit._source.tweetGeoCoordinates, {
@@ -68,61 +72,21 @@ function fetchTweetsInES( keyWord ) {
             fillColor: '#f03',
             fillOpacity: 0.5,
             radius: 500
-        }).addTo(map);
+        })
 
-        setTimeout(function(){
-          console.log("trying to remove")
-          map.removeLayer(circle)
-            // console.log(map);
-            // console.log(circle);
+        circle.addTo(map);
 
-         }, 600);
-
-        // setTimeout(function(){
-        //   console.log("trying to remove");
-
-        //   map.removeLayer(circle)}, 60000);
+        // markers.push(circle);
+        // markersLayer.addLayer(markers);
+        // console.log("circle", circle);
     })
+    //
+    // console.log('markers', markers)
+    // console.log('num of markers', markers.length)
+    // console.log('markersLayer', markersLayer)
   });
   // end of post request
 }
-
-
-
-
-
-//set markers
-// var markers = [
-//    {
-//      "name": "Shanghai",
-//      "url": "https://en.wikipedia.org/wiki/Shanghai",
-//      "lat": 31.2304,
-//      "lng": 121.4737
-//    },
-//    {
-//      "name": "New York",
-//      "url": "https://en.wikipedia.org/wiki/New_York",
-//      "lat": 40.7128,
-//      "lng": -74.0059
-//    },
-//    {
-//      "name": "Oregon",
-//      "url": "https://en.wikipedia.org/wiki/Japan",
-//      "lat": 43.8041,
-//      "lng": -120.5542
-//    }
-// ];
-
-// for ( var i=0; i < markers.length; ++i )
-// {
-//    L.marker( [markers[i].lat, markers[i].lng] )
-//       .bindPopup( '<a href="' + markers[i].url + '" target="_blank">' + markers[i].name + '</a>' )
-//       .addTo( map );
-// }
-
-
-
-
 
 // use socket to display all incoming tweets
 var socket = io.connect("http://localhost:8081/");
@@ -141,9 +105,6 @@ socket.on("a new tweet is coming", function(data) {
     setTimeout(function(){
       console.log(circle);
       map.removeLayer(circle)
-        // console.log(map);
-        // console.log(circle);
-
      }, 1500);
 });
 //

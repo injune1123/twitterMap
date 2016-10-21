@@ -26,6 +26,7 @@ var twitter = new Twit({
   access_token_secret: nconf.get('TWITTER_ACCESS_TOKEN_SECRET')
 });
 
+
 //initialize AWS ES
 var Elasticsearch = require('aws-es');
 var elasticsearch = new Elasticsearch({
@@ -44,22 +45,14 @@ var locations = {
 // difine tweetStrem
 var tweetStream = twitter.stream('statuses/filter', { locations: locations.all });
 
-// //tweet app
-// io.on('connection', function (socket) {
-//   // when there is a new tweet message, this listens and executes
-//   socket.on('new message', function (data) {
-//     // we tell the client to execute 'new message'
-//     socket.broadcast.emit('new message', {
-//       username: socket.username,
-//       message: data
-//     });
-//   });
-// })
+
+// console.log(tweetStream);
 
 
 // on tweet
 tweetStream.on('tweet', function (tweet) {
-
+  
+console.log("trying to seed data")
 // check that tweet has geo
 if (tweet.geo) {
   // console.log(tweet);
