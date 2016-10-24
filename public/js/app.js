@@ -157,7 +157,7 @@ response.data.aggregations.geohashAgg.buckets.map(function(aggObj){
 
 
 var circle = L.circleMarker(L.latLng({"lat":aggObj.centroid.location.lat,"lon":aggObj.centroid.location.lon}), {
-  radius: Math.sqrt(numOfTweets),
+  radius: Math.sqrt(numOfTweets)/2,
   stroke: false,
   color: 'red',
   fillColor: '#FFff00',
@@ -189,7 +189,7 @@ var circle = L.circleMarker(L.latLng({"lat":aggObj.centroid.location.lat,"lon":a
 }
 
 // use socket to display all incoming tweets
-var socket = io.connect("http://localhost:8081/");
+var socket = io.connect("http://twittermap-env.us-east-1.elasticbeanstalk.com/");
 socket.on("a new tweet is coming", function(data) {
     // Do stuff when we connect to the server
     var circle = L.circle(data, {
