@@ -13,109 +13,6 @@ function clearAllDots(){
   }
 }
 
-var geohashBounds = function(geohash) {
-    if (geohash.length === 0) throw new Error('Invalid geohash');
-
-    geohash = geohash.toLowerCase();
-
-    var evenBit = true;
-    var latMin =  -90, latMax =  90;
-    var lonMin = -180, lonMax = 180;
-
-    for (var i=0; i<geohash.length; i++) {
-        var chr = geohash.charAt(i);
-        var idx = geohashBase32.indexOf(chr);
-        if (idx == -1) throw new Error('Invalid geohash');
-
-        for (var n=4; n>=0; n--) {
-            var bitN = idx >> n & 1;
-            if (evenBit) {
-                // longitude
-                var lonMid = (lonMin+lonMax) / 2;
-                if (bitN == 1) {
-                    lonMin = lonMid;
-                } else {
-                    lonMax = lonMid;
-                }
-            } else {
-                // latitude
-                var latMid = (latMin+latMax) / 2;
-                if (bitN == 1) {
-                    latMin = latMid;
-                } else {
-                    latMax = latMid;
-                }
-            }
-            evenBit = !evenBit;
-        }
-    }
-
-    var bounds = {
-        sw: { lat: latMin, lon: lonMin },
-        ne: { lat: latMax, lon: lonMax },
-    };
-
-    return bounds;
-};
-
-
-var geohashDecode = function(geohash) {
-
-    var bounds = geohashBounds(geohash); // <-- the hard work
-    // now just determine the centre of the cell...
-
-    var latMin = bounds.sw.lat, lonMin = bounds.sw.lon;
-    var latMax = bounds.ne.lat, lonMax = bounds.ne.lon;
-
-    // cell centre
-    var lat = (latMin + latMax)/2;
-    var lon = (lonMin + lonMax)/2;
-
-    // round to close to centre without excessive precision: ⌊2-log10(Δ°)⌋ decimal places
-    lat = lat.toFixed(Math.floor(2-Math.log(latMax-latMin)/Math.LN10));
-    lon = lon.toFixed(Math.floor(2-Math.log(lonMax-lonMin)/Math.LN10));
-
-    return [ Number(lat), Number(lon)];
-};
-
-
-
-
-// // buggy implementation of geo search
-// axios({
-//   method: 'post',
-//   url: 'https://search-twitter-map-elastic-search-p3rukqk4g4jihaolzvop62ysea.us-east-1.es.amazonaws.com/tweets3/_search',
-//   data: {
-//     "query": {
-//         "match_all": {}
-//     },
-//     "size" : 1000,
-//     "aggs" : {
-//         "geohashAgg" : {
-//             "geohash_grid" : {
-//                 "field" : "tweet_geo_coord",
-//                 "precision" : 2
-//             }
-//         }
-//     }
-//   }
-// }).then(function(response){
-//
-// response.data.aggregations.geohashAgg.buckets.map(function(aggObj){
-//   var goeHash = aggObj.key;
-//   var numOfTweets = aggObj.doc_count
-//   var circle = L.circleMarker(geohashDecode(goeHash), {
-//     radius: Math.sqrt(numOfTweets)/3,
-//     stroke: false,
-//
-//       color: 'red',
-//       fillColor: '#FFff00',
-//       fillOpacity: 0.5,
-//   }).addTo(map);
-//  })
-// })
-
-
 function initializeMap(){
   map = L.map( 'map', {
       center: [20.0, 5.0],
@@ -165,7 +62,7 @@ function fetchTweetsInES( keyWord ) {
     method: 'post',
     url: 'https://search-twitter-map-elastic-search-p3rukqk4g4jihaolzvop62ysea.us-east-1.es.amazonaws.com/tweets3/_search',
     data: {
-      "size":5000,
+      "size":3000,
       "query": query
     }
   }).then(function(response){
@@ -179,11 +76,8 @@ function fetchTweetsInES( keyWord ) {
             fillOpacity: 0.5,
             radius: 500
         })
-
         circle.addTo(map);
-
     })
-
   });
   // end of post request
 }
@@ -192,9 +86,6 @@ function fetchTweetsInES( keyWord ) {
 var socket = io.connect("http://localhost:8081/");
 socket.on("a new tweet is coming", function(data) {
     // Do stuff when we connect to the server
-    // console.log("wawawawlallal")
-    // console.log(data);
-
     var circle = L.circle(data, {
         color: 'red',
         fillColor: '#f03',
@@ -203,9 +94,6 @@ socket.on("a new tweet is coming", function(data) {
     }).addTo(map);
 
     setTimeout(function(){
-      // console.log(circle);
       map.removeLayer(circle)
      }, 1500);
 });
-//
-//

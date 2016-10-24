@@ -26,7 +26,6 @@ var twitter = new Twit({
   access_token_secret: nconf.get('TWITTER_ACCESS_TOKEN_SECRET')
 });
 
-
 //initialize AWS ES
 var Elasticsearch = require('aws-es');
 var elasticsearch = new Elasticsearch({
@@ -53,7 +52,7 @@ tweetStream.on('tweet', function (tweet) {
 // // check that tweet has geo
 if (tweet.geo) {
   io.sockets.emit('a new tweet is coming', tweet.geo.coordinates);
-//
+   console.log("new tiwtter coming");
 //   //index
   elasticsearch.index({
   			index: 'tweets3',
@@ -67,7 +66,6 @@ if (tweet.geo) {
   });
 }
 });
-
 
 app.get('/', function (req, res) {
   res.send('Hello World!');

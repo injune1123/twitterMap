@@ -1,7 +1,0 @@
-1) node + express + html = a server with hello world
-2) html + leaflet + fake data = a map
-3) twitter account + node twitter library() + file read library (nconf) = set up the file system
-
-
-
-4) set up an elastic search instance online: twitter-map-elastic-search
