@@ -45,26 +45,26 @@ var locations = {
 var tweetStream = twitter.stream('statuses/filter', { locations: locations.all });
 
 
-
 // // on tweet
 tweetStream.on('tweet', function (tweet) {
 //
+console.log("trying to seed data")
 // // check that tweet has geo
-if (tweet.geo) {
-  io.sockets.emit('a new tweet is coming', tweet.geo.coordinates);
-   console.log("new tiwtter coming");
-//   //index
-  elasticsearch.index({
-  			index: 'tweets3',
-  			type: 'tweets',
-  			body: {
-  				'tweet_geo_coord': tweet.geo.coordinates,
-  				'tweet_content': tweet.text
-  			}
-  		}, function(err, data) {
-  			console.log('json reply received');
-  });
-}
+  if (tweet.geo) {
+  //   // console.log(tweet);
+    io.sockets.emit('a new tweet is coming', tweet.geo.coordinates);
+  //   //index
+    elasticsearch.index({
+    			index: 'tweets4',
+    			type: 'tweets',
+    			body: {
+    				'tweet_geo_coord': tweet.geo.coordinates.reverse(),
+    				'tweet_content': tweet.text
+    			}
+    		}, function(err, data) {
+    			console.log('new tweet indexed');
+    });
+  }
 });
 
 app.get('/', function (req, res) {
@@ -74,7 +74,6 @@ app.get('/', function (req, res) {
 app.get('/about', function (req, res) {
   res.send('Hi, we are a good team!');
 });
-
 
 app.use(function(req, res, next) {
   res.status(404).send('Sorry cant find that!');
