@@ -46,44 +46,27 @@ var locations = {
 var tweetStream = twitter.stream('statuses/filter', { locations: locations.all });
 
 
-// console.log(tweetStream);
 
-
-// on tweet
+// // on tweet
 tweetStream.on('tweet', function (tweet) {
-  
-console.log("trying to seed data")
-// check that tweet has geo
+//
+// // check that tweet has geo
 if (tweet.geo) {
-  // console.log(tweet);
-  //console.log(tweet.text);
   io.sockets.emit('a new tweet is coming', tweet.geo.coordinates);
-
-  //index
+//
+//   //index
   elasticsearch.index({
-  			index: 'tweets2',
+  			index: 'tweets3',
   			type: 'tweets',
   			body: {
-  				'tweetGeoCoordinates': tweet.geo.coordinates,
-  				'tweetContent': tweet.text
+  				'tweet_geo_coord': tweet.geo.coordinates,
+  				'tweet_content': tweet.text
   			}
   		}, function(err, data) {
   			console.log('json reply received');
   });
-
-
-  // fs.appendFile('twitt_data.txt', '{"tweetGeoCoordinates": ' + ('[' + tweet.geo.coordinates + ']') + ', "tweetContent" :' + ('"' + tweet.text + '"') + '}\r\n\r\n', function(err) {
-  //   if (err) {
-  //     console.error("write error: " + error.message);
-  //   } else {
-  //     console.log("tweet:", tweet);
-  //   }
-  //   })
-
-  };
-
+}
 });
-
 
 
 app.get('/', function (req, res) {
