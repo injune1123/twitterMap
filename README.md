@@ -8,7 +8,7 @@ This is a map that shows tweets. You will see the red dots as incoming data. Yel
 2. run $npm install
 3. open the sample-config.json file and replace "YOU-INFO" with your true info, and rename the "sample-config.json" file to "config.json"
 4. run $node app
-5. open your favorite browser and type "localhost:8081/static/hello.twitter-map" to see twitterMap
+5. open your favorite browser and type "localhost:8081/static/twitter-map.html" to see twitterMap
 
 
 ## npm Packages Used
