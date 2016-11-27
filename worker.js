@@ -37,17 +37,28 @@ var workerApp = Consumer.create({
 	};
 
 	alchemy_language.sentiment(params, function (err, response) {
-	  if (err)
+	  if (err){
 	    console.log('>_<~**************error:', err);
-	  else
+	  }  
+	  else{
 	    console.log(">_<~**************",JSON.stringify(response, null, 2));
 
-		var tweetMessage = {
-			'tweet': msgBody.text,
-			'tweetSentiment' : response,
-			'tweetGeoLocation': msgBody.geo
-		};
+		var sentimentScore = undefined;
+		var sentimentType = undefined;
 
+		if(response.status === 'OK'){
+			var docSentiment = response.docSentiment;
+			sentimentScore = parseFloat(docSentiment.score);
+			sentimentType = docSentiment.type;
+		}
+
+		var tweetMessage = {
+			'tweet_content': msgBody.text,
+			'tweet_geo_coord': msgBody.geo.coordinates,
+			'sentiment_score' : sentimentScore,
+			'sentiment_type' : sentimentType,
+		};
+	}
 		console.log("=0= ^^^^^~&********)(*)*(*)",tweetMessage)
 
 

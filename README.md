@@ -46,3 +46,32 @@ This is a map that shows tweets. You will see the red dots as incoming data. Yel
          }
       }
 }`
+
+## elasticsearch reference with sentiment analysis
+
+`
+POST /tweets
+{
+      "mappings": {
+         "tweets": {
+            "properties": {
+               "tweet_content": {
+                  "type": "string"
+               },
+               "tweet_geo_coord": {
+                  "type": "geo_point",
+                  "geohash": true,
+                  "geohash_prefix": true,
+                  "geohash_precision": 7
+               },
+               "tweet_sentiment_score":{
+                   "type":"double"
+               },
+               "tweet_sentiment_type":{
+                   "type":"string"
+               }
+            }
+         }
+      }
+}
+`

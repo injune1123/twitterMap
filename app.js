@@ -2,11 +2,24 @@
 var express = require('express');
 var request = require('request');
 var app = express();
+var nconf = require('nconf');
+nconf.file({ file: 'config.json' }).env();
 var port =  process.env.PORT || 8081;
 var server = require('http').createServer(app);
 var util = require('./util');
 var bodyParser = require('body-parser');
 
+
+//initialize AWS ES
+var Elasticsearch = require('aws-es');
+
+var elasticsearch = new Elasticsearch({
+		accessKeyId: nconf.get('ACCESS_KEY_ID'),
+		secretAccessKey: nconf.get('SECRECT_ACCESS_KEY'),
+		service: nconf.get('SERVICE'),
+		region: nconf.get('REGION'),
+		host: nconf.get("HOST")
+});
 
 server.listen(port, function () {
   console.log('Example app listening on port 8081!');
@@ -38,13 +51,26 @@ app.post('/notification',function(req, res) {
     })
     }
     if(hdr === 'Notification'){
-    	cleaned_msg = JSON.parse(req.body['Message']);
+    	// cleaned_msg = JSON.parse(req.body['Message']);
 
-        console.log("tweets!!!!!!!!!!!!!!!!!!!", cleaned_msg['tweet']);
-        console.log("tweetSentiment!!!!!!!!!!!!", cleaned_msg['tweetSentiment']);
-        console.log("tweetGeoLocation!!!!!!!!", cleaned_msg['tweetGeoLocation']);
+        console.log("data!!!!!!!!!!!!!!!!!!!", req.body['Message'], typeof(req.body['Message']));
+
 
         //Elasticsearch
+
+        elasticsearch.index({
+                 index: 'tweets',
+                 type: 'tweets',
+                 body: JSON.parse(req.body['Message'])
+               }, function(err, data) {
+
+                if(err){
+                  console.log(err)
+                }else{
+                 console.log('new tweet indexed');
+                }
+
+            });
 
         //socket.io
     }
@@ -56,16 +82,3 @@ app.use(function(req, res, next) {
   res.status(404).send('Sorry. cant find that.');
 });
 
-
-// reference to https://www.ibm.com/developerworks/library/wa-notify-app/
-
-
-
-// app.get('/subscriptions', sub.findAll);
-// app.get('/subscriptions/:id', sub.findById);
-// app.put('/subscriptions/:id', sub.updateSubscription);
-// app.delete('/subscriptions/:id', sub.deleteSubscription);
-// //An API to signal an event:
-// app.post('/signals', signal.processSignal);
-// //An API to retrieve a log of recent signals:
-// app.get('/signallog', signallog.findRecent);
