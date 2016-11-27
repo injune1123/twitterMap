@@ -23,7 +23,6 @@ var workerApp = Consumer.create({
     console.log("~ -(0_<)/ ~",msgBody);
 
 
-
     var AlchemyLanguageV1 = require('watson-developer-cloud/alchemy-language/v1');
 
 	var alchemy_language = new AlchemyLanguageV1({
