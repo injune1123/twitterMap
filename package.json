@@ -25,11 +25,14 @@
   "dependencies": {
     "aws-es": "^1.5.3",
     "aws-sdk": "^2.7.7",
+    "body-parser": "^1.15.2",
     "elasticsearch": "^11.0.1",
     "express": "^4.14.0",
     "lodash": "^4.16.4",
     "nconf": "^0.8.4",
     "socket.io": "^1.5.0",
-    "twit": "^2.2.5"
+    "sqs-consumer": "^3.4.0",
+    "twit": "^2.2.5",
+    "watson-developer-cloud": "^2.9.0"
   }
 }

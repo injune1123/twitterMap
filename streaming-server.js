@@ -36,7 +36,7 @@ var twitter = new Twit({
 //initialize SQS
 var AWS = require('aws-sdk');
 AWS.config.update({accessKeyId: nconf.get('ACCESS_KEY_ID'), secretAccessKey: nconf.get('SECRECT_ACCESS_KEY')});
-var sqs = new AWS.SQS({region:'us-east-1'}); 
+var sqs = new AWS.SQS({region:nconf.get('REGION')}); 
 
 //====================================================================
 //streaming tweets 
@@ -55,7 +55,7 @@ var tweetStream = twitter.stream('statuses/filter', { locations: locations.all, 
 
 // // on tweet
 
-//Pumping messages into the AWS SQS: Amazon Simple Message Queue Service
+// Pumping messages into the AWS SQS: Amazon Simple Message Queue Service
 tweetStream.on('tweet', function (tweet) {
 //
 // console.log("trying to seed data")
@@ -65,7 +65,7 @@ tweetStream.on('tweet', function (tweet) {
     // got some help from the blog : http://clarkie.io/nodejs/2015/03/05/sqs-with-nodejs.html 
     var sqsParams = {
       MessageBody: JSON.stringify(tweet),
-      QueueUrl: 'https://sqs.us-east-1.amazonaws.com/236141017744/TweeterMapTweetProcessingQueue'
+      QueueUrl: nconf.get('AWS_SQS_URL'),
     };
 
     sqs.sendMessage(sqsParams, function(err, data) {
@@ -77,8 +77,6 @@ tweetStream.on('tweet', function (tweet) {
     })
   }
 });
-
-
 
 
   // fs.appendFile('twitt_data.txt', tweet.lang + '\r\n' + tweet.geo.coordinates + '\r\n' + tweet.text + '\r\n\r\n', function(err) {
