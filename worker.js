@@ -26,7 +26,7 @@ var workerApp = Consumer.create({
     var AlchemyLanguageV1 = require('watson-developer-cloud/alchemy-language/v1');
 
 	var alchemy_language = new AlchemyLanguageV1({
-	  api_key: '58628cf8fcb60ffb107cd339d87265e46ba7a3c4'
+	  api_key: nconf.get("ALCHEMY_API_KEY")
 	});
 
 
