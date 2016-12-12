@@ -4,7 +4,10 @@
   "description": "a web application to present tweets on google map",
   "main": "index.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "npm-run-all --parallel open streaming worker",
+    "open": "node app.js",
+    "worker": "node worker.js",
+    "streaming": "node streaming-server.js"
   },
   "repository": {
     "type": "git",
@@ -29,6 +32,7 @@
     "express": "^4.14.0",
     "lodash": "^4.16.4",
     "nconf": "^0.8.4",
+    "npm-run-all": "^3.1.2",
     "socket.io": "^1.5.0",
     "sqs-consumer": "^3.4.0",
     "twit": "^2.2.5",

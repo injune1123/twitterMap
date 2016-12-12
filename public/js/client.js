@@ -135,16 +135,26 @@ function fetchTweetsInES( keyWord ) {
 
 
     console.log(response.data);
-    
+
 
     response.data.map(function(dataObj){
+      var color = '#D3D3D3'; // grey - null/undefined because of Alchemy incapability
+      var sentimentType = dataObj['_source']['sentiment_type'];
+
+      if (sentimentType === "positive"){
+        color = 'red';// red - happy
+      }else if (sentimentType === "negative"){
+        color = 'blue';// blue - sad
+      }else if (sentimentType === "neutral") {
+        color = 'green'; //green - netural
+      }
       var circle = L.circleMarker(L.latLng({"lat":dataObj['_source']['tweet_geo_coord'][0],"lon":dataObj['_source']['tweet_geo_coord'][1]}), {
-          radius: 10,
-          stroke: false,
-          color: 'red',
-          fillColor: '#FFff00',
-          fillOpacity: 0.5,
-        }).addTo(map);
+        radius: 10,
+        stroke: false,
+        color: color,
+        fillColor: color,
+        fillOpacity: 0.5,
+      }).addTo(map);
 
     });
 
@@ -196,7 +206,11 @@ function fetchTweetsInES( keyWord ) {
 
 // use socket to display all incoming tweets
 var socket = io.connect(window.location.origin);
+    console.log("hoooooo socket is connected!")
+
 socket.on("a new tweet is coming", function(data) {
+    // console.log("data", data);
+    console.log("socket is firing!")
     // Do stuff when we connect to the server
     var circle = L.circle(data, {
         color: 'red',

@@ -5,14 +5,13 @@ var app = express();
 var nconf = require('nconf');
 nconf.file({ file: 'config.json' }).env();
 var port =  process.env.PORT || 8081;
-var server = require('http').createServer(app);
+var server = require('http').Server(app);
 var util = require('./util');
 var bodyParser = require('body-parser');
-var streamingServer = require('./streaming-server');
-var worker= require('./worker');
-
 // var server = require('http').createServer(app);
-// var io = require('socket.io')(server);
+var io = require('socket.io')(server);
+var streamingServer = require('./streaming-server');
+var worker = require('./worker');
 
 //initialize AWS ES
 var Elasticsearch = require('aws-es');
@@ -49,7 +48,7 @@ app.get('/search',function(req,res){
   console.log("??????",req.query['search_str']);
 
   var bodyContent = {
-        "size":100,
+        "size":500,
         "query": {
             "match_all":{}
         }
@@ -57,7 +56,7 @@ app.get('/search',function(req,res){
 
   if (req.query['search_str']){
     bodyContent = {
-        "size":20,
+        "size":500,
         "query": {
             "match":{
               "tweet_content":req.query['search_str']
@@ -83,6 +82,7 @@ app.get('/search',function(req,res){
 console.log ('registering subscription routes with express');
 
 app.post('/notification',function(req, res) {
+  
 	hdr = req.headers['x-amz-sns-message-type']
     if(hdr === 'SubscriptionConfirmation' && req.body.hasOwnProperty('SubscribeURL')){
     	request(req.body['SubscribeURL'], function (error, response, body) {
@@ -91,21 +91,23 @@ app.post('/notification',function(req, res) {
     	}
     })
     }
+    console.log(hdr)
     if(hdr === 'Notification'){
-        console.log("data!!!!!!!!!!!!!!!!!!!", req.body['Message'], typeof(req.body['Message']));      //Elasticsearch
+        // console.log("data!!!!!!!!!!!!!!!!!!!", req.body['Message'], typeof(req.body['Message']));      //Elasticsearch
+        console.log("data!!!")
         elasticsearch.index({
                  index: 'tweets',
                  type: 'tweets',
                  body: JSON.parse(req.body['Message'])
                }, function(err, data) {
-
                 if(err){
                   console.log(err)
+                  console.log("Index failed")
                 }else{
                   //socket.io
-
-                  io.sockets.emit('a new tweet is coming', tweet.geo.coordinates);
-                 console.log('new tweet indexed');
+                  console.log("Indexed successfully")
+                  io.sockets.emit('a new tweet is coming', JSON.parse(req.body['Message'])['tweet_geo_coord']);
+                  console.log('new tweet indexed');
                 }
             });
     }
@@ -117,5 +119,7 @@ app.use(function(req, res, next) {
   res.status(404).send('Sorry. cant find that.');
 });
 
+
 streamingServer.streamingServer();
 worker.worker();
+

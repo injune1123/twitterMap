@@ -36,28 +36,32 @@ var workerApp = Consumer.create({
 	};
 
 	alchemy_language.sentiment(params, function (err, response) {
-	  if (err){
-	    console.log('>_<~**************error:', err);
-	  }  
-	  else{
-	    console.log(">_<~**************",JSON.stringify(response, null, 2));
-
 		var sentimentScore = undefined;
 		var sentimentType = undefined;
-
-		if(response.status === 'OK'){
-			var docSentiment = response.docSentiment;
-			sentimentScore = parseFloat(docSentiment.score);
-			sentimentType = docSentiment.type;
-		}
-
-		var tweetMessage = {
+		if (err){
+			console.log('>_<~**************error:', err);
+			var tweetMessage = {
 			'tweet_content': msgBody.text,
 			'tweet_geo_coord': msgBody.geo.coordinates,
 			'sentiment_score' : sentimentScore,
 			'sentiment_type' : sentimentType,
-		};
-	}
+		}
+		}
+		else{  
+			console.log(">_<~**************",JSON.stringify(response, null, 2));
+			if(response.status === 'OK'){
+				var docSentiment = response.docSentiment;
+				sentimentScore = parseFloat(docSentiment.score);
+				sentimentType = docSentiment.type;
+			}
+
+			var tweetMessage = {
+				'tweet_content': msgBody.text,
+				'tweet_geo_coord': msgBody.geo.coordinates,
+				'sentiment_score' : sentimentScore,
+				'sentiment_type' : sentimentType,
+			}
+		}
 		console.log("=0= ^^^^^~&********)(*)*(*)",tweetMessage)
 
 
@@ -82,12 +86,12 @@ var workerApp = Consumer.create({
   }
 });
 
-var worker = function(){
 workerApp.on('error', function (err) {
   console.log(err);
 });
 
-workerApp.start();
+var worker = function(){
+	workerApp.start();
 }
 
 module.exports = {
