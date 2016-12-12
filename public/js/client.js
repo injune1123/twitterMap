@@ -195,7 +195,7 @@ function fetchTweetsInES( keyWord ) {
 // })
 
 // use socket to display all incoming tweets
-var socket = io.connect("http://twittermap-env.us-east-1.elasticbeanstalk.com/");
+var socket = io.connect(window.location.origin);
 socket.on("a new tweet is coming", function(data) {
     // Do stuff when we connect to the server
     var circle = L.circle(data, {

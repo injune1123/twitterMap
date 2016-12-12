@@ -53,6 +53,7 @@ var locations = {
 var tweetStream = twitter.stream('statuses/filter', { locations: locations.all, language: 'en' });
 
 
+var streamingServer = function(){
 // // on tweet
 
 // Pumping messages into the AWS SQS: Amazon Simple Message Queue Service
@@ -78,7 +79,7 @@ tweetStream.on('tweet', function (tweet) {
   }
 });
 
-
+}
   // fs.appendFile('twitt_data.txt', tweet.lang + '\r\n' + tweet.geo.coordinates + '\r\n' + tweet.text + '\r\n\r\n', function(err) {
   //     if (err) {
   //       // console.error("write error: " + error.message);
@@ -105,3 +106,7 @@ tweetStream.on('tweet', function (tweet) {
 //     });
 //   }
 // });
+
+module.exports = {
+  streamingServer: streamingServer
+}

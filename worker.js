@@ -82,8 +82,14 @@ var workerApp = Consumer.create({
   }
 });
 
+var worker = function(){
 workerApp.on('error', function (err) {
   console.log(err);
 });
 
 workerApp.start();
+}
+
+module.exports = {
+	worker: worker
+}

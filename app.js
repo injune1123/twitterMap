@@ -8,6 +8,9 @@ var port =  process.env.PORT || 8081;
 var server = require('http').createServer(app);
 var util = require('./util');
 var bodyParser = require('body-parser');
+var streamingServer = require('./streaming-server');
+var worker= require('./worker');
+
 // var server = require('http').createServer(app);
 // var io = require('socket.io')(server);
 
@@ -114,3 +117,5 @@ app.use(function(req, res, next) {
   res.status(404).send('Sorry. cant find that.');
 });
 
+streamingServer.streamingServer();
+worker.worker();
